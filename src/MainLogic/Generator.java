@@ -45,4 +45,9 @@ public class Generator {
     public ArrayList<HashMap<String, HashSet<Integer> > > getObject() {
         return object;
     }
+
+    public void saveObject() {
+        //TO DO
+        //CSVSaver.save(object);
+    }
 }
