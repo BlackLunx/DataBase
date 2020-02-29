@@ -14,6 +14,7 @@ public class ReadColumns {
         this.read(path);
     }
     private void read(String path) {
+        columns = new ArrayList<>();
         try {
             BufferedReader br = new BufferedReader(new FileReader(path));
             String line = "";
