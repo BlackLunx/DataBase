@@ -1,0 +1,5 @@
+id
+brand
+type
+size
+color

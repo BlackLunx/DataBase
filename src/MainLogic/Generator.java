@@ -9,6 +9,7 @@ import java.util.HashSet;
 public class Generator {
     private CSVReader reader = null;
     private ArrayList<HashMap<String, HashSet<Integer> > > object;
+    private ArrayList<String[]> base;
     public Generator(String path, String del) {
         this.constructor(path, del);
     }
@@ -24,13 +25,13 @@ public class Generator {
 
     private void constructor(String path, String del) {
         reader = new CSVReader(path, del);
-        ArrayList<String[]> currentStrings = reader.getOutput();
-        String[] columnNames = currentStrings.get(0);
+        base = reader.getOutput();
+        String[] columnNames = base.get(0);
         for(String name: columnNames) {
             object.add(new HashMap<>());
         }
-        for(int i = 1; i < currentStrings.size(); i++) {
-            String[] fields = currentStrings.get(i);
+        for(int i = 1; i < base.size(); i++) {
+            String[] fields = base.get(i);
             for(int j = 0; j < fields.length; j++) {
                 if(!object.get(j).containsKey(fields[j])) {
                     object.get(j).put(fields[j], new HashSet<>());
@@ -45,7 +46,9 @@ public class Generator {
     public ArrayList<HashMap<String, HashSet<Integer> > > getObject() {
         return object;
     }
-
+    public ArrayList<String[]> getBase() {
+        return base;
+    }
     public void saveObject() {
         //TO DO
         //CSVSaver.save(object);
