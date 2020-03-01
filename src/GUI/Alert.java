@@ -12,6 +12,7 @@ public class Alert extends JDialog {
         setContentPane(panel1);
         setModal(true);
         setLocation(location);
+        setTitle("Оповещение");
         AlertMessage.setText(text);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

@@ -7,27 +7,25 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Generator {
-    private CSVReader reader = null;
     private ArrayList<HashMap<String, HashSet<Integer> > > object;
     private ArrayList<String[]> base;
-    public Generator(String path, String del) {
-        this.constructor(path, del);
+    private String path = "res/bases/";
+    private String format = ".csv";
+    public Generator(String name, String del) {
+        this.constructor(name, del);
     }
 
-    public Generator(String path) {
-        this.constructor(path, ";");
+    public Generator(String name) {
+        this.constructor(name, ";");
     }
 
-    public Generator() {
-        //TO DO
-        // this.constructor("path", ";");
-    }
 
-    private void constructor(String path, String del) {
-        reader = new CSVReader(path, del);
+    private void constructor(String name, String del) {
+        CSVReader reader = new CSVReader(path + name + format, del);
         base = reader.getOutput();
+        object = new ArrayList<>();
         String[] columnNames = base.get(0);
-        for(String name: columnNames) {
+        for(String currentName: columnNames) {
             object.add(new HashMap<>());
         }
         for(int i = 1; i < base.size(); i++) {

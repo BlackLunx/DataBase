@@ -2,26 +2,40 @@ package MainLogic;
 
 import MainLogic.Helpers.ReadColumns;
 import javafx.util.Pair;
+import org.jetbrains.annotations.NotNull;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.StringJoiner;
 
 public class Buttons {
     private HashMap<String, Integer> convertColumns;
-    private Generator generator;
-    private ArrayList<String> columns;
-    private HashSet<Integer> alreadyDeleted;
-    public Buttons() {
+    public Generator generator;
+    public ArrayList<String> columns;
+    public HashSet<Integer> alreadyDeleted;
+    private String name;
+    private String path = "res/bases/";
+    private String format = ".csv";
+    public Buttons(String name) {
+        this.name = name;
         convertColumns = new HashMap<>();
-        generator = new Generator();
+        generator = new Generator(name);
         ReadColumns reader = new ReadColumns();
         columns = new ArrayList<>();
         columns.addAll(reader.columns);
+        for(int i = 0; i < columns.size(); i++) {
+            convertColumns.put(columns.get(i), i);
+        }
         alreadyDeleted = new HashSet<>();
     }
     public ArrayList<String[]> find(String columnName, String field) {
         ArrayList<String[]> current = new ArrayList<>();
+        if(generator.getObject().get(convertColumns.get(columnName)).get(field) == null) {
+            return null;
+        }
         HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
         currentIndexes.removeAll(alreadyDeleted);
         for(int ind: currentIndexes) {
@@ -34,5 +48,36 @@ public class Buttons {
         HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
         currentIndexes.removeAll(alreadyDeleted);
         return new Pair<>(currentIndexes, generator.getBase());
+    }
+
+    public boolean add(@NotNull String[] fields) {
+        ArrayList<String[]> check = find("id", fields[0]);
+        if(check == null) {
+            generator.getBase().add(fields);
+            for(int i = 0; i < fields.length; i++) {
+                if(!generator.getObject().get(i).containsKey(fields[i])) {
+                    generator.getObject().get(i).put(fields[i], new HashSet<>());
+                }
+                HashSet<Integer> currentSet = generator.getObject().get(i).get(fields[i]);
+                currentSet.add(i);
+                generator.getObject().get(i).put(fields[i], currentSet);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public void save() throws IOException {
+        FileWriter writer = new FileWriter(path + name + format);
+        for(int i = 0; i < generator.getBase().size();i++) {
+            if(alreadyDeleted.contains(i)) continue;
+            ReadColumns reader = new ReadColumns();
+            StringJoiner sj = new StringJoiner(";");
+            for(String field: generator.getBase().get(i)) {
+                sj.add(field);
+            }
+            writer.write(sj.toString() + "\n");
+        }
+        writer.close();
     }
 }
