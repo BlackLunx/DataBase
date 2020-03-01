@@ -8,9 +8,10 @@ public class Alert extends JDialog {
     private JPanel panel1;
     private JLabel AlertMessage;
 
-    public Alert(String text) {
+    public Alert(String text, Point location) {
         setContentPane(panel1);
         setModal(true);
+        setLocation(location);
         AlertMessage.setText(text);
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {

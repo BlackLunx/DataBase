@@ -1,6 +1,7 @@
 package MainLogic;
 
 import MainLogic.Helpers.ReadColumns;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,18 +18,21 @@ public class Buttons {
         ReadColumns reader = new ReadColumns();
         columns = new ArrayList<>();
         columns.addAll(reader.columns);
+        alreadyDeleted = new HashSet<>();
     }
     public ArrayList<String[]> find(String columnName, String field) {
         ArrayList<String[]> current = new ArrayList<>();
         HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
-        currentIndexes.remove(alreadyDeleted);
+        currentIndexes.removeAll(alreadyDeleted);
         for(int ind: currentIndexes) {
             current.add(generator.getBase().get(ind));
         }
         return current;
     }
 
-    public void delete(String columnName, String field) {
-
+    public Pair<HashSet<Integer>, ArrayList<String[]>> delete(String columnName, String field) {
+        HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
+        currentIndexes.removeAll(alreadyDeleted);
+        return new Pair<>(currentIndexes, generator.getBase());
     }
 }
