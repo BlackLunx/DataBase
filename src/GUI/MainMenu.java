@@ -98,6 +98,9 @@ public class MainMenu extends JDialog {
     private void onOpen() {
         // add your code here
         buttonsMainMenu.openDB(textField1.getText());
+        MainWindow mw = new MainWindow(textField1.getText(), 0);
+        mw.pack();
+        mw.setVisible(true);
         //dispose();
     }
 
@@ -109,6 +112,9 @@ public class MainMenu extends JDialog {
 
     private void onRestore() {
         buttonsMainMenu.restoreDB(textField1.getText());
+        MainWindow mw = new MainWindow(textField1.getText(), 1);
+        mw.pack();
+        mw.setVisible(true);
     }
 
     private void onExitButton() {

@@ -19,10 +19,10 @@ public class Buttons {
     private String name;
     private String path = "res/bases/";
     private String format = ".csv";
-    public Buttons(String name) {
+    public Buttons(String name, int from) {
         this.name = name;
         convertColumns = new HashMap<>();
-        generator = new Generator(name);
+        generator = new Generator(name, from);
         ReadColumns reader = new ReadColumns();
         columns = new ArrayList<>();
         columns.addAll(reader.columns);
@@ -33,10 +33,19 @@ public class Buttons {
     }
     public ArrayList<String[]> find(String columnName, String field) {
         ArrayList<String[]> current = new ArrayList<>();
-        if(generator.getObject().get(convertColumns.get(columnName)).get(field) == null) {
+        if(generator.getObject().get(convertColumns.get(columnName)).get(field) == null && field.length() != 0) {
             return null;
         }
-        HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
+        HashSet<Integer> currentIndexes;
+        if(field.length() == 0) {
+            currentIndexes = new HashSet<>();
+            for(int i = 1;i < generator.getBase().size();i++) {
+                currentIndexes.add(i);
+            }
+        }
+        else{
+            currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
+        }
         currentIndexes.removeAll(alreadyDeleted);
         for(int ind: currentIndexes) {
             current.add(generator.getBase().get(ind));
@@ -45,6 +54,9 @@ public class Buttons {
     }
 
     public Pair<HashSet<Integer>, ArrayList<String[]>> delete(String columnName, String field) {
+        if(generator.getObject().get(convertColumns.get(columnName)).get(field) == null) {
+            return null;
+        }
         HashSet<Integer> currentIndexes = new HashSet<>(generator.getObject().get(convertColumns.get(columnName)).get(field));
         currentIndexes.removeAll(alreadyDeleted);
         return new Pair<>(currentIndexes, generator.getBase());
@@ -52,14 +64,14 @@ public class Buttons {
 
     public boolean add(@NotNull String[] fields) {
         ArrayList<String[]> check = find("id", fields[0]);
-        if(check == null) {
+        if(check == null || check.size() == 0) {
             generator.getBase().add(fields);
             for(int i = 0; i < fields.length; i++) {
                 if(!generator.getObject().get(i).containsKey(fields[i])) {
                     generator.getObject().get(i).put(fields[i], new HashSet<>());
                 }
                 HashSet<Integer> currentSet = generator.getObject().get(i).get(fields[i]);
-                currentSet.add(i);
+                currentSet.add(generator.getBase().size() - 1);
                 generator.getObject().get(i).put(fields[i], currentSet);
             }
             return true;

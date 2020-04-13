@@ -52,11 +52,12 @@ public class ButtonsMainMenu {
 
     }
     public void restoreDB(String name) {
-        File folder = new File(path + name);
+        File folder = new File("res/backups/" + name + ".db");
         if(!folder.exists()) {
             generateAlert("Такой базы данных не существует");
             return;
         }
+
     }
     private void generateAlert(String message) {
         Alert alert = new Alert(message, screen);

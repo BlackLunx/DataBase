@@ -12,16 +12,24 @@ public class Generator {
     private String path = "res/bases/";
     private String format = ".csv";
     public Generator(String name, String del) {
-        this.constructor(name, del);
+        this.constructor(name, del, 0);
     }
 
     public Generator(String name) {
-        this.constructor(name, ";");
+        this.constructor(name, ";", 0);
+    }
+    public Generator(String name, int from) {
+        this.constructor(name, ";", from);
     }
 
-
-    private void constructor(String name, String del) {
-        CSVReader reader = new CSVReader(path + name + format, del);
+    private void constructor(String name, String del, int from) {
+        CSVReader reader;
+        if(from == 1) {
+            reader = new CSVReader("res/backups/" + name + ".db", del);
+        }
+        else{
+            reader = new CSVReader(path + name + format, del);
+        }
         base = reader.getOutput();
         object = new ArrayList<>();
         String[] columnNames = base.get(0);

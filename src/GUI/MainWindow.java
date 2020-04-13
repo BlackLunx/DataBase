@@ -1,8 +1,11 @@
 package GUI;
 
+import MainLogic.DataBase;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 
 public class MainWindow extends JDialog {
     private JPanel contentPane;
@@ -11,12 +14,16 @@ public class MainWindow extends JDialog {
     private JButton deleteButton;
     private JButton saveButton;
     private JButton exitButton;
+    private DataBase db;
 
-    public MainWindow() {
+    public MainWindow(String name, int from) {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(addButton);
+        setTitle(name);
 
+        setLocation(500, 300);
+        db = new DataBase(name, getLocation(), from);
         addButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onAdd();
@@ -39,57 +46,81 @@ public class MainWindow extends JDialog {
         saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                onSave();
+                try {
+                    onSave();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         exitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                onExit();
+                try {
+                    onExit(1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                onExit();
+                try {
+                    onExit(0);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
 
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                onExit();
+                try {
+                    onExit(0);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
     private void onAdd() {
-        //ADD
+        Add add = new Add(db);
+        add.pack();
+        add.setVisible(true);
     }
 
     private void onFind() {
-        //FIND
+        FindDelete dialog = new FindDelete(db.cols, "Find", getLocation(), db);
+        dialog.pack();
+        dialog.setVisible(true);
     }
 
     private void onDelete() {
-        //Delete
+        FindDelete dialog = new FindDelete(db.cols, "Delete", getLocation(), db);
+        dialog.pack();
+        dialog.setVisible(true);
     }
 
-    private void onSave() {
-        //Save
+    private void onSave() throws IOException {
+        db.save();
+        db.generateAlert("Успешно сохранено");
     }
 
-    private void onExit() {
-        onSave();
+    private void onExit(int fromButton) throws IOException {
+        if (fromButton > 0)
+            onSave();
         dispose();
     }
 
     public static void main(String[] args) {
-        MainWindow dialog = new MainWindow();
-        dialog.pack();
-        dialog.setVisible(true);
+        //MainWindow dialog = new MainWindow();
+        //dialog.pack();
+        //dialog.setVisible(true);
         System.exit(0);
     }
 
@@ -110,6 +141,7 @@ public class MainWindow extends JDialog {
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
         contentPane.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 1, new Insets(10, 10, 10, 10), -1, -1));
+        contentPane.setBackground(new Color(-1));
         contentPane.setMinimumSize(new Dimension(800, 500));
         contentPane.setName("DataBase");
         contentPane.setPreferredSize(new Dimension(800, 500));
@@ -119,20 +151,26 @@ public class MainWindow extends JDialog {
         contentPane.add(panel1, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, 1, null, null, null, 0, false));
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new com.intellij.uiDesigner.core.GridLayoutManager(1, 4, new Insets(0, 0, 0, 0), -1, -1));
+        panel2.setBackground(new Color(-1));
         panel1.add(panel2, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_BOTH, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         addButton = new JButton();
+        addButton.setBackground(new Color(-3808318));
         addButton.setText("Add");
         panel2.add(addButton, new com.intellij.uiDesigner.core.GridConstraints(0, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         findButton = new JButton();
+        findButton.setBackground(new Color(-3808318));
         findButton.setText("Find");
         panel2.add(findButton, new com.intellij.uiDesigner.core.GridConstraints(0, 1, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         deleteButton = new JButton();
+        deleteButton.setBackground(new Color(-3808318));
         deleteButton.setText("Delete");
         panel2.add(deleteButton, new com.intellij.uiDesigner.core.GridConstraints(0, 2, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         saveButton = new JButton();
+        saveButton.setBackground(new Color(-3808318));
         saveButton.setText("Save");
         panel2.add(saveButton, new com.intellij.uiDesigner.core.GridConstraints(0, 3, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         exitButton = new JButton();
+        exitButton.setBackground(new Color(-3808318));
         exitButton.setText("Exit");
         panel1.add(exitButton, new com.intellij.uiDesigner.core.GridConstraints(1, 0, 1, 1, com.intellij.uiDesigner.core.GridConstraints.ANCHOR_CENTER, com.intellij.uiDesigner.core.GridConstraints.FILL_HORIZONTAL, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_SHRINK | com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_CAN_GROW, com.intellij.uiDesigner.core.GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
     }

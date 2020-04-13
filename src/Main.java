@@ -1,4 +1,6 @@
 import GUI.Alert;
+import GUI.MainMenu;
+import GUI.MainWindow;
 import MainLogic.Buttons;
 import MainLogic.ButtonsMainMenu;
 import MainLogic.DataBase;
@@ -7,6 +9,7 @@ import javafx.util.Pair;
 
 
 import javax.print.DocFlavor;
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +19,8 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        DataBase db = new DataBase("www", new Point(400, 400));
-        db.find("brand", "qwewq");
-
+        MainMenu wind = new MainMenu();
+        wind.pack();
+        wind.setVisible(true);
     }
 }
